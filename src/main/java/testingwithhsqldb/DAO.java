@@ -39,4 +39,39 @@ public class DAO {
 		return result;
 	}
 	
+        public void insertProduct(Product product) throws SQLException {
+		String requete = "INSERT INTO PRODUCT VALUES(?, ?, ?)";
+		try (
+                     Connection connection = myDataSource.getConnection();
+                     PreparedStatement stmt = connection.prepareStatement(requete)
+                    ) 
+                {
+			stmt.setInt(1, product.getId());
+			stmt.setString(2, product.getName());
+			stmt.setFloat(3, product.getPrice());
+			stmt.executeUpdate();
+		}
+	}
+        
+        Product findProduct(int productID) throws SQLException {
+		Product client = null;
+		String requete = "SELECT * FROM PRODUCT WHERE PRODUCT_ID = ?";
+		try (
+                     Connection connection = myDataSource.getConnection();
+                     PreparedStatement stmt = connection.prepareStatement(requete)
+                    ) 
+                {
+			stmt.setInt(1, productID);
+			try (ResultSet rs = stmt.executeQuery())
+                        {
+				if (rs.next())
+                                { 
+					String name = rs.getString("NAME");
+					float price = rs.getFloat("PRICE");
+					client = new Product(productID, name, price);
+				}
+			}
+		}
+                return client;
+	}
 }
