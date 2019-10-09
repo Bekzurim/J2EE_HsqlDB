@@ -69,5 +69,26 @@ public class HsqlDBTest {
 		ds.setUser("sa");
 		ds.setPassword("sa");
 		return ds;
-	}	
+	}
+        
+        float prix = 17.9f;
+        
+        @Test
+	public void NewProduct() throws SQLException {
+		Product produit = new Product(10,"Un nouveau produit",prix);
+		myObject.insertProduct(produit);
+		assertEquals(produit, myObject.findProduct(10));
+	}
+
+        @Test(expected = SQLException.class)
+	public void priceMustBePositive() throws SQLException {
+		Product prodNeg = new Product(2,"Produit avec un prix négatif",prix);
+		myObject.insertProduct(prodNeg);
+	}
+        
+	@Test(expected = SQLException.class)
+	public void DuplicateKeys() throws SQLException {
+		Product prod = new Product(1, "Produit déjà existant",prix);
+		myObject.insertProduct(prod);
+	}
 }
